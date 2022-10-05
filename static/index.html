@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <title>zerocal</title>
+    <style>
+      body {
+        font-family: monospace;
+      }
+      input,
+      textarea,
+      select {
+        font-family: inherit;
+      }
+      label {
+        color: #f81ce5;
+      }
+      #values {
+        margin: 1em;
+      }
+    </style>
+    <script>
+      function updateUrl() {
+        // Get the form
+        let form = document.querySelector("#form");
+
+        // If start is after end, set end to start
+        let start = new Date(form.start.value);
+        let end = new Date(form.end.value);
+        if (start > end) {
+          form.end.value = form.start.value;
+        }
+
+        // concatenate the form values into a query string
+        let params = new URLSearchParams(new FormData(form)).toString();
+
+        let url = new URL(window.location);
+        url.search = params;
+        // Maybe update browser URL?
+        // window.history.replaceState({}, "", url);
+
+        // set `<a href>` to the new URL
+        document.getElementById("link").href = url;
+        document.getElementById("link").textContent = url;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("start").value = new Date()
+          .toISOString()
+          .slice(0, 16);
+
+        // set end date to 1 hour from now
+        document.getElementById("end").value = new Date(
+          Date.now() + 60 * 60 * 1000
+        )
+          .toISOString()
+          .slice(0, 16);
+
+        updateUrl();
+
+        document.querySelectorAll("input[type=text]").forEach((input) => {
+          input.addEventListener("keyup", updateUrl);
+        });
+        document.querySelectorAll("input, select").forEach((input) => {
+          input.addEventListener("change", updateUrl);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Your Meeting Invite</h1>
+    <form id="form">
+      <table>
+        <tr>
+          <td>
+            <label for="title">Event Title</label>
+          </td>
+          <td>
+            <input type="text" id="title" name="title" value="Birthday" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="desc">Description</label>
+          </td>
+          <td>
+            <input type="text" id="desc" name="desc" value="Party" />
+          </td>
+        </tr>
+        <tr>
+          <td><label for="start">Start</label></td>
+          <td>
+            <input type="datetime-local" id="start" name="start" />
+          </td>
+        </tr>
+        <tr>
+          <td><label for="end">End</label></td>
+          <td>
+            <input type="datetime-local" id="end" name="end" />
+          </td>
+        </tr>
+      </table>
+    </form>
+
+    <p>Your meeting link:</p>
+    <p>
+      <a id="link"></a>
+    </p>
+  </body>
+</html>
