@@ -1,7 +1,8 @@
 # zerocal 🚫📆
 
 Welcome to zerocal, the *serverless calendar*.  
-It allows you to create calendar invites from the convenience of your terminal!
+It allows you to create calendar invites from the convenience of your terminal!  
+🔗 Here's my [blog post about the project](https://endler.dev/2022/zerocal/).
 
 ## Usage
 
