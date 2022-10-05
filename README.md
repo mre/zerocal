@@ -24,5 +24,5 @@ Please check the issue tracker for contribution ideas. Any pull request is welco
 
 ## Credits
 
-This app was built with the help of [shuttle.rs](https://www.shuttle.rs/),
+This app was built with the help of 🚀 [shuttle.rs](https://www.shuttle.rs/),
 the web application platform for Rust. 
