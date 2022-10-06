@@ -2,6 +2,16 @@
 name = "zerocal"
 version = "0.1.0"
 edition = "2021"
+authors = ["Matthias Endler <matthias@endler.dev>"]
+description = "A serverless calendar app"
+homepage = "https://github.com/mre/zerocal"
+repository = "https://github.com/mre/zerocal"
+keywords = [
+    "calendar",
+    "shuttle",
+    "shuttle.rs",
+]
+license = "Apache-2.0/MIT"
 
 [[bin]]
 name = "zerocal"
