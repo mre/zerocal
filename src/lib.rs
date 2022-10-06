@@ -2,16 +2,18 @@ use axum::{
     body::{boxed, Full},
     extract::Query,
     http::HeaderValue,
-    routing::post,
 };
 use axum::{
     http::header,
     response::{IntoResponse, Response},
-    routing::get,
-    Router,
 };
 use icalendar::*;
 use std::collections::HashMap;
+
+use axum::routing::post;
+use axum::{routing::get, Router};
+
+#[cfg(feature = "shuttle")]
 use sync_wrapper::SyncWrapper;
 
 const DEFAULT_EVENT_TITLE: &str = "New Calendar Event";
@@ -31,7 +33,7 @@ impl IntoResponse for CalendarResponse {
     }
 }
 
-async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
+pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
     // if query is empty, show form
     if params.is_empty() || params.values().all(|s| s.is_empty()) {
         return Response::builder()
@@ -107,6 +109,8 @@ async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoRes
     CalendarResponse(ical).into_response()
 }
 
+// cfg if shuttle feature is enabled
+#[cfg(feature = "shuttle")]
 #[shuttle_service::main]
 async fn axum() -> shuttle_service::ShuttleAxum {
     let router = Router::new()
