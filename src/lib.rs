@@ -98,6 +98,10 @@ async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoRes
         }
     }
 
+    if let Some(location) = params.get("location") {
+        event.location(location);
+    }
+
     let ical = Calendar::new().push(event.done()).done();
 
     CalendarResponse(ical).into_response()
