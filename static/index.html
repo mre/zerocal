@@ -66,8 +66,8 @@
     </script>
   </head>
   <body>
-    <h1>Your Meeting Invite</h1>
-    <form id="form">
+    <h1>Create Meeting</h1>
+    <form id="form" method="GET" action="/">
       <table>
         <tr>
           <td>
@@ -98,17 +98,18 @@
           </td>
         </tr>
         <tr>
-          <td><label for="location">Location/URL (optional)</label></td>
+          <td><label for="location">Location/URL</label></td>
           <td>
             <input type="text" id="location" name="location" />
           </td>
         </tr>
+        <tr>
+          <td></td>
+          <td>
+            <button type="submit">Download Invite</button>
+          </td>
+        </tr>
       </table>
     </form>
-
-    <p>Your meeting link:</p>
-    <p>
-      <a id="link"></a>
-    </p>
   </body>
 </html>
