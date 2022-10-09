@@ -41,6 +41,12 @@
         // split params into lines and decode each parameter
         const terminal = `curl -LG  ${location} ${params
           .split("&")
+          .filter((param) => {
+            // split each param into key and value
+            const [key, value] = param.split("=");
+            // filter out empty values
+            return value;
+            })
           .map((param) => ` -d ${decodeURIComponent(param)}`)
           .join("")}`;
 
