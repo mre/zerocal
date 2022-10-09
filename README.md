@@ -29,6 +29,19 @@ The server will listen on port 8080 by default.
 
 Please check the issue tracker for contribution ideas. Any pull request is welcome. ❤️
 
+To run a local development version install [cargo-watch](https://crates.io/crates/cargo-watch)
+and then run
+
+```
+make local
+```
+
+You can also run a dev version on shuttle.rs with
+
+```
+make dev
+```
+
 ## Derivatives
 
 Was your project inspired by zerocal? Add it here!

@@ -4,7 +4,7 @@ run dev:
 
 .PHONY: local
 local:
-	cargo run --features local
+	cargo watch -x 'run --features local'
 
 .PHONY: deploy
 deploy:
