@@ -29,6 +29,12 @@ The server will listen on port 8080 by default.
 
 Please check the issue tracker for contribution ideas. Any pull request is welcome. ❤️
 
+## Derivatives
+
+Was your project inspired by zerocal? Add it here!
+
+- [kiwical](https://github.com/maheshsundaram/kiwi) - Kiwi Calendar built with Typescript on Deno Deploy.
+
 ## Credits
 
 This app was built with the help of 🚀 [shuttle.rs](https://www.shuttle.rs/),
