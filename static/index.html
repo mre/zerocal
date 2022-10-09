@@ -34,10 +34,15 @@
 
         let url = new URL(window.location);
         url.search = params;
-        // Maybe update browser URL?
-        // window.history.replaceState({}, "", url);
 
-        const terminal = `curl ${url}`;
+        // get URL without params
+        const location = new URL(window.location); 
+
+        // split params into lines and decode each parameter
+        const terminal = `curl -LG  ${location} ${params
+          .split("&")
+          .map((param) => ` -d ${decodeURIComponent(param)}`)
+          .join("")}`;
 
         // set `<a href>` to the new URL
         document.getElementById("curl").textContent = terminal;
