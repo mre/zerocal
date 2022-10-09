@@ -37,9 +37,10 @@
         // Maybe update browser URL?
         // window.history.replaceState({}, "", url);
 
+        const terminal = `curl ${url}`;
+
         // set `<a href>` to the new URL
-        document.getElementById("link").href = url;
-        document.getElementById("link").textContent = url;
+        document.getElementById("curl").textContent = terminal;
       }
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -111,5 +112,33 @@
         </tr>
       </table>
     </form>
+
+    <details>
+      <summary>&#x1F4A1; Did you know?</summary>
+      <ul>
+        <li>
+          <strong>You can create this calendar event from your terminal:</strong>
+          <p>
+            <code id="curl"> </code>
+          </p>
+        </li>
+        <li>
+          <strong>You can use many different date formats:</strong>
+          <table>
+            <tr>
+              <td>UNIX timestamp</td>
+              <td>1511648546</td>
+            </tr>
+            <tr>
+              <td>yyyy/mm/dd hh:mm:ss</td>
+              <td>2014/4/8 22:05</td>
+            </tr>
+            <tr>
+              <td><a href="https://docs.rs/dateparser/latest/dateparser/#accepted-date-formats">And many more</a></td>
+            </tr>
+        </table>
+        </li>
+      <ul>
+    </details>
   </body>
 </html>
