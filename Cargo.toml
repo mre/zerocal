@@ -18,6 +18,7 @@ name = "zerocal"
 path = "src/bin.rs"
 
 [dependencies]
+anyhow = "1.0"
 axum = "0.5"
 chrono = "0.4.22"
 dateparser = "0.1.7"

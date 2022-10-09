@@ -1,20 +1,24 @@
+use anyhow::Result;
+use axum::routing::post;
 use axum::{
     body::{boxed, Full},
     extract::Query,
-    http::HeaderValue,
+    http::{HeaderValue, StatusCode},
 };
 use axum::{
     http::header,
     response::{IntoResponse, Response},
 };
+use axum::{routing::get, Router};
 use icalendar::*;
 use std::collections::HashMap;
 
-use axum::routing::post;
-use axum::{routing::get, Router};
-
 #[cfg(feature = "shuttle")]
 use sync_wrapper::SyncWrapper;
+
+mod time;
+
+use time::{parse_duration, parse_time};
 
 const DEFAULT_EVENT_TITLE: &str = "New Calendar Event";
 
@@ -31,6 +35,14 @@ impl IntoResponse for CalendarResponse {
         );
         res
     }
+}
+
+/// Helper function to return a `BAD_REQUEST` status code with a custom message
+fn bad_request(body: String) -> Response {
+    Response::builder()
+        .status(StatusCode::BAD_REQUEST)
+        .body(boxed(Full::from(body)))
+        .unwrap()
 }
 
 pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
@@ -57,14 +69,20 @@ pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl Int
 
     match params.get("start") {
         Some(start) if !start.is_empty() => {
-            let start = dateparser::parse(start).unwrap_or_else(|_| {
-                let time = chrono::NaiveDateTime::parse_from_str(start, "%Y-%m-%dT%H:%M").unwrap();
-                chrono::DateTime::<chrono::Utc>::from_utc(time, chrono::Utc)
-            });
+            let start = match parse_time(start) {
+                Ok(start) => start,
+                Err(e) => {
+                    return bad_request(format!("Invalid start time: {}", e));
+                }
+            };
             event.starts(start);
             if let Some(duration) = params.get("duration") {
-                let duration = humantime::parse_duration(duration).unwrap();
-                let duration = chrono::Duration::from_std(duration).unwrap();
+                let duration = match parse_duration(duration) {
+                    Ok(duration) => duration,
+                    Err(e) => {
+                        return bad_request(format!("Invalid duration: {}", e));
+                    }
+                };
                 event.ends(start + duration);
             }
         }
@@ -77,17 +95,22 @@ pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl Int
 
     match params.get("end") {
         Some(end) if !end.is_empty() => {
-            let end = dateparser::parse(end).unwrap_or_else(|_| {
-                let time = chrono::NaiveDateTime::parse_from_str(end, "%Y-%m-%dT%H:%M").unwrap();
-                chrono::DateTime::<chrono::Utc>::from_utc(time, chrono::Utc)
-            });
-
+            let end = match parse_time(end) {
+                Ok(end) => end,
+                Err(e) => {
+                    return bad_request(format!("Invalid end time: {}", e));
+                }
+            };
             event.ends(end);
             if let Some(duration) = params.get("duration") {
                 if params.get("start").is_none() {
                     // If only duration is given but no start, set start to end - duration
-                    let duration = humantime::parse_duration(duration).unwrap();
-                    let duration = chrono::Duration::from_std(duration).unwrap();
+                    let duration = match parse_duration(duration) {
+                        Ok(duration) => duration,
+                        Err(e) => {
+                            return bad_request(format!("Invalid duration: {}", e));
+                        }
+                    };
                     event.starts(end - duration);
                 }
             }

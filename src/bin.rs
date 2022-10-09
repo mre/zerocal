@@ -11,16 +11,19 @@ use zerocal::calendar;
 use std::net::SocketAddr;
 
 #[cfg(feature = "local")]
+use anyhow::Result;
+
+#[cfg(feature = "local")]
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     let router = Router::new()
         .route("/", get(calendar))
         .route("/", post(calendar));
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
-        .await
-        .unwrap();
+        .await?;
+    Ok(())
 }
 
 #[cfg(not(feature = "local"))]
