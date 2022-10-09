@@ -2,8 +2,8 @@
 run dev:
 	cargo shuttle run
 
-.PHONY: local
-local:
+.PHONY: watch local
+watch local:
 	cargo watch -x 'run --features local'
 
 .PHONY: deploy
