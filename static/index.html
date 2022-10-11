@@ -38,16 +38,25 @@
         // get URL without params
         const location = new URL(window.location); 
 
-        // split params into lines and decode each parameter
-        const terminal = `curl -LG  ${location} ${params
+        const paramsFiltered = params
           .split("&")
           .filter((param) => {
             // split each param into key and value
             const [key, value] = param.split("=");
             // filter out empty values
             return value;
-            })
-          .map((param) => ` -d ${decodeURIComponent(param)}`)
+            });
+
+        // set #link to the new URL
+        document.querySelector("#link").href = location + "?" + paramsFiltered.join("&");
+        // set #link to the new URL
+        document.querySelector("#link").text = location + "?" + paramsFiltered.join("&");
+
+        const terminalSimple = `curl '${location}?${paramsFiltered.join("&")}'`;
+        document.getElementById("curl-simple").textContent = terminalSimple;
+
+        // split params into lines and decode each parameter
+        const terminal = `curl -LG  ${location} ${paramsFiltered.map((param) => ` -d ${decodeURIComponent(param)}`)
           .join("")}`;
 
         // set `<a href>` to the new URL
@@ -130,7 +139,21 @@
         <li>
           <strong>You can create this calendar event from your terminal:</strong>
           <p>
-            <code id="curl"> </code>
+            <code id="curl-simple"></code>
+          </p>
+          <p>
+            or alternatively
+          </p>
+          <p>
+            <code id="curl"></code>
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>You can also share a direct link to the calendar event:</strong>
+            <p>
+              <a href="" id="link"></a>
+            </p>
           </p>
         </li>
         <li>
