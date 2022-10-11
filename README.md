@@ -23,7 +23,7 @@ You can also use the web UI at https://zerocal.shuttleapp.rs
 You can also self-host zerocal.
 To do so, compile the binary with `cargo build --release --features local` and
 run it with `./target/release/zerocal`.
-The server will listen on port 8080 by default.
+The server will listen on port 8000 by default.
 
 ## Contributing
 

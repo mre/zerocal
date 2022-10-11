@@ -19,7 +19,7 @@ async fn main() -> Result<()> {
     let router = Router::new()
         .route("/", get(calendar))
         .route("/", post(calendar));
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
         .await?;
