@@ -41,7 +41,10 @@ impl IntoResponse for CalendarResponse {
 impl IntoResponse for BytesResponse {
     fn into_response(self) -> Response {
         let mut res = Response::new(boxed(Full::from(self.bytes)));
-        res.headers_mut().insert(header::CONTENT_TYPE, HeaderValue::from_static(self.content_type));
+        res.headers_mut().insert(
+            header::CONTENT_TYPE,
+            HeaderValue::from_static(self.content_type),
+        );
         res
     }
 }
@@ -58,23 +61,32 @@ pub async fn qr(Query(params): Query<HashMap<String, String>>) -> impl IntoRespo
     // Get calendar
     let cal = match cal::create_calendar(params) {
         Ok(cal) => cal,
-        Err(e) => { return bad_request(e.err); }
+        Err(e) => {
+            return bad_request(e.err);
+        }
     };
 
-    let qr = match qrcode_generator::to_png_to_vec(cal.to_string(), qrcode_generator::QrCodeEcc::Medium, 256) {
+    let qr = match qrcode_generator::to_png_to_vec(
+        cal.to_string(),
+        qrcode_generator::QrCodeEcc::Medium,
+        256,
+    ) {
         Ok(qr) => qr,
-        Err(e) => { return bad_request(format!("Failed to turn calendar into qr code: {}", e)); }
+        Err(e) => {
+            return bad_request(format!("Failed to turn calendar into qr code: {}", e));
+        }
     };
 
-    BytesResponse{
+    BytesResponse {
         bytes: qr,
         content_type: "image/png",
-    }.into_response()
+    }
+    .into_response()
 }
 
 pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
     // if query is empty, show form
-    if params.is_empty() || params.values().all(|s| s.is_empty()) {
+    if params.is_empty() || params.values().all(String::is_empty) {
         return Response::builder()
             .status(200)
             .body(boxed(Full::from(include_str!("../static/index.html"))))
@@ -83,7 +95,9 @@ pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl Int
 
     let ical = match cal::create_calendar(params) {
         Ok(cal) => cal,
-        Err(e) => { return bad_request(e.err); }
+        Err(e) => {
+            return bad_request(e.err);
+        }
     };
 
     CalendarResponse(ical).into_response()
