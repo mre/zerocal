@@ -8,20 +8,13 @@ pub struct CalendarParseError {
     pub err: String,
 }
 const DEFAULT_EVENT_TITLE: &str = "New Calendar Event";
+const DEFAULT_DESCRIPTION: &str = "Powered by zerocal.shuttleapp.rs";
 
 pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar, CalendarParseError> {
     let mut event = Event::new();
 
-    if let Some(title) = params.get("title") {
-        event.summary(title);
-    } else {
-        event.summary(DEFAULT_EVENT_TITLE);
-    }
-    if let Some(desc) = params.get("desc") {
-        event.description(desc);
-    } else {
-        event.description("Powered by zerocal.shuttleapp.rs");
-    }
+    event.summary(params.get("title").map(String::as_str).unwrap_or(DEFAULT_EVENT_TITLE));
+    event.description(params.get("desc").map(String::as_str).unwrap_or(DEFAULT_DESCRIPTION));
 
     match params.get("start") {
         Some(start) if !start.is_empty() => {
