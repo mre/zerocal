@@ -57,31 +57,25 @@ fn bad_request(body: String) -> Response {
         .unwrap()
 }
 
-pub async fn qr(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
-    // Get calendar
-    let cal = match cal::create_calendar(params) {
-        Ok(cal) => cal,
-        Err(e) => {
-            return bad_request(e.err);
-        }
-    };
-
-    let qr = match qrcode_generator::to_png_to_vec(
-        cal.to_string(),
-        qrcode_generator::QrCodeEcc::Medium,
-        256,
-    ) {
-        Ok(qr) => qr,
-        Err(e) => {
-            return bad_request(format!("Failed to turn calendar into qr code: {}", e));
-        }
-    };
-
-    BytesResponse {
+pub fn qr(Query(params): Query<HashMap<String, String>>) -> Result<BytesResponse> {
+    let cal = cal::create_calendar(params)?;
+    let qr =
+        qrcode_generator::to_png_to_vec(cal.to_string(), qrcode_generator::QrCodeEcc::Medium, 256)?;
+    Ok(BytesResponse {
         bytes: qr,
         content_type: "image/png",
+    })
+}
+
+pub async fn result_to_response<T, E>(res: Result<T, E>) -> impl IntoResponse
+where
+    T: IntoResponse,
+    E: ToString,
+{
+    match res {
+        Ok(resp) => resp.into_response(),
+        Err(e) => bad_request(e.to_string()),
     }
-    .into_response()
 }
 
 pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
@@ -96,7 +90,7 @@ pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl Int
     let ical = match cal::create_calendar(params) {
         Ok(cal) => cal,
         Err(e) => {
-            return bad_request(e.err);
+            return bad_request(e.to_string());
         }
     };
 
@@ -105,7 +99,7 @@ pub async fn calendar(Query(params): Query<HashMap<String, String>>) -> impl Int
 
 pub fn get_router() -> Router {
     Router::new()
-        .route("/qr", get(qr))
+        .route("/qr", get(|params| result_to_response(qr(params))))
         .route("/", get(calendar))
         .route("/", post(calendar))
 }

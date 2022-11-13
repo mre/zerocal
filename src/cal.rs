@@ -4,26 +4,31 @@ use std::collections::HashMap;
 
 use crate::time::{parse_duration, parse_time};
 
-pub struct CalendarParseError {
-    pub err: String,
-}
 const DEFAULT_EVENT_TITLE: &str = "New Calendar Event";
 const DEFAULT_DESCRIPTION: &str = "Powered by zerocal.shuttleapp.rs";
 
-pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar, CalendarParseError> {
+pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar> {
     let mut event = Event::new();
 
-    event.summary(params.get("title").map(String::as_str).unwrap_or(DEFAULT_EVENT_TITLE));
-    event.description(params.get("desc").map(String::as_str).unwrap_or(DEFAULT_DESCRIPTION));
+    event.summary(
+        params
+            .get("title")
+            .map(String::as_str)
+            .unwrap_or(DEFAULT_EVENT_TITLE),
+    );
+    event.description(
+        params
+            .get("desc")
+            .map(String::as_str)
+            .unwrap_or(DEFAULT_DESCRIPTION),
+    );
 
     match params.get("start") {
         Some(start) if !start.is_empty() => {
             let start = match parse_time(start) {
                 Ok(start) => start,
                 Err(e) => {
-                    return Err(CalendarParseError {
-                        err: format!("Invalid start time: {}", e),
-                    });
+                    return Err(e.context("Invalid start time"));
                 }
             };
             event.starts(start);
@@ -31,9 +36,7 @@ pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar, Cale
                 let duration = match parse_duration(duration) {
                     Ok(duration) => duration,
                     Err(e) => {
-                        return Err(CalendarParseError {
-                            err: format!("Invalid duration: {}", e),
-                        });
+                        return Err(e.context("Invalid duration"));
                     }
                 };
                 event.ends(start + duration);
@@ -51,9 +54,7 @@ pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar, Cale
             let end = match parse_time(end) {
                 Ok(end) => end,
                 Err(e) => {
-                    return Err(CalendarParseError {
-                        err: format!("Invalid end time: {}", e),
-                    });
+                    return Err(e.context("Invalid end time"));
                 }
             };
             event.ends(end);
@@ -63,9 +64,7 @@ pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar, Cale
                     let duration = match parse_duration(duration) {
                         Ok(duration) => duration,
                         Err(e) => {
-                            return Err(CalendarParseError {
-                                err: format!("Invalid duration: {}", e),
-                            });
+                            return Err(e.context("Invalid duration"));
                         }
                     };
                     event.starts(end - duration);
