@@ -43,19 +43,16 @@ pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar> {
         .map_or(Ok(None), |r| r.map(Some))
         .map_err(|e| e.context("Invalid duration"))?;
 
-    let (start, end) = match (start, end, duration) {
+    let (start, end) = match (start, end, duration.unwrap_or(DEFAULT_EVENT_DURATION)) {
         // If start + end + duration given, ignore duration (or assume it's correct).
         (Some(start), Some(end), _) => (start, end),
 
         // If given either start or end, use that plus duration (or default duration).
-        (Some(start), None, dur) => (start, start + dur.unwrap_or(DEFAULT_EVENT_DURATION)),
-        (None, Some(end), dur) => (end - dur.unwrap_or(DEFAULT_EVENT_DURATION), end),
+        (Some(start), None, dur) => (start, start + dur),
+        (None, Some(end), dur) => (end - dur, end),
 
         // If not given a start or an end, use now() and duration (or default duration).
-        (None, None, dur) => (
-            chrono::Utc::now(),
-            chrono::Utc::now() + dur.unwrap_or(DEFAULT_EVENT_DURATION),
-        ),
+        (None, None, dur) => (chrono::Utc::now(), chrono::Utc::now() + dur),
     };
     event.starts(start);
     event.ends(end);
