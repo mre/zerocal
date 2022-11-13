@@ -48,9 +48,11 @@
             });
 
         // set #link to the new URL
-        document.querySelector("#link").href = location + "?" + paramsFiltered.join("&");
-        // set #link to the new URL
-        document.querySelector("#link").text = location + "?" + paramsFiltered.join("&");
+        const newUrl = location + "?" + paramsFiltered.join("&");
+        const qrUrl = location + "qr?" + paramsFiltered.join("&");
+        document.querySelector("#link").href = newUrl;
+        document.querySelector("#link").text = newUrl;
+        document.querySelector("#qr").src = qrUrl;
 
         const terminalSimple = `curl '${location}?${paramsFiltered.join("&")}'`;
         document.getElementById("curl-simple").textContent = terminalSimple;
@@ -153,6 +155,8 @@
             <strong>You can also share a direct link to the calendar event:</strong>
             <p>
               <a href="" id="link"></a>
+              </br>
+              <img src="" id="qr"></img>
             </p>
           </p>
         </li>
