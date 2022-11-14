@@ -47,5 +47,6 @@ jobs:
       - lint
     steps:  
       - uses: shuttle-hq/deploy-action@main
+        if: github.repository_owner == 'mre'
         with:
           deploy-key: ${{ secrets.SHUTTLE_DEPLOY_KEY }}
