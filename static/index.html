@@ -29,6 +29,13 @@
           form.end.value = form.start.value;
         }
 
+        let alert = null;
+        let alertTime = parseInt(form["alert-time"].value);
+        if (!isNaN(alertTime)) {
+          let alertUnit = form["alert-unit"].value;
+          alert = `${alertTime}${alertUnit}`;
+        }
+
         // concatenate the form values into a query string
         let params = new URLSearchParams(new FormData(form)).toString();
 
@@ -45,7 +52,16 @@
             const [key, value] = param.split("=");
             // filter out empty values
             return value;
-            });
+            })
+          .filter((param) => {
+              // filter out alert fields; they are parsed separately
+              return !param.startsWith("alert");
+          });
+
+        // Add alert to params
+        if (alert) {
+          paramsFiltered.push(`alert=${alert}`);
+        }
 
         // set #link to the new URL
         const newUrl = location + "?" + paramsFiltered.join("&");
@@ -118,6 +134,18 @@
           <td><label for="end">End</label></td>
           <td>
             <input type="datetime-local" id="end" name="end" />
+          </td>
+        </tr>
+        <tr>
+          <td><label for="alert">Alert</label></td>
+          <td>
+            <input type="text" id="alert-time" name="alert-time" />
+            <select name="alert-unit" id="alert-unit">
+              <option value="m">minutes</option>
+              <option value="h">hours</option>
+              <option value="d">days</option>
+            </select>
+            before
           </td>
         </tr>
         <tr>
