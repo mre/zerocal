@@ -57,6 +57,16 @@ pub fn create_calendar(params: HashMap<String, String>) -> Result<Calendar> {
     event.starts(start);
     event.ends(end);
 
+    if let Some(time) = params.get("alert") {
+        // parse alert time (e.g. "15m" or "1h")
+        let alert_time = parse_duration(time).map_err(|e| e.context("Invalid alert time"))?;
+
+        event.alarm(
+            Alarm::display("Event is about to start", -alert_time)
+                .duration_and_repeat(alert_time, 1),
+        );
+    }
+
     if let Some(location) = params.get("location") {
         event.location(location);
     }
