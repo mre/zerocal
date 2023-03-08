@@ -23,15 +23,15 @@ path = "src/bin.rs"
 
 [dependencies]
 anyhow = "1.0.66"
-axum = "0.5.17"
+axum = "0.6.7"
 chrono = "0.4.22"
 dateparser = "0.1.7"
 humantime = "2.1.0"
 icalendar = "0.14.0"
 qrcode-generator = "4.1.6"
-shuttle-service = { version = "0.7.2", features = ["web-axum"], optional = true }
+shuttle-service = { version = "0.11.0", features = ["web-axum"], optional = true }
 sync_wrapper = "0.1.1"
-tokio = { version = "1.20.1", features = ["macros"], optional = true }
+tokio = { version = "1.22.0", features = ["macros"], optional = true }
 
 [features]
 default = ["shuttle"]

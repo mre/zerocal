@@ -1,5 +1,6 @@
 use anyhow::Result;
-use axum::routing::post;
+use axum::routing::{get, post};
+use axum::Router;
 use axum::{
     body::{boxed, Full},
     extract::Query,
@@ -9,7 +10,6 @@ use axum::{
     http::header,
     response::{IntoResponse, Response},
 };
-use axum::{routing::get, Router};
 use icalendar::*;
 use std::collections::HashMap;
 
